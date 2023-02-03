@@ -1,17 +1,20 @@
 name: Deploy
-
 on:
   push:
     branches:
-      - master
-
+      - master # set the events you would like to trigger this job
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build, Push and Deploy to Heroku
+        id: heroku
+        uses: snithyanantham/docker-compose-multiple-apps-heroku-deploy@v1.0 
         with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "orangehrm-mfabdillah" #Must be unique in Heroku
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          email: ${{ secrets.HEROKU_EMAIL }}
+          api_key: ${{ secrets.HEROKU_API_KEY }}
+          docker_compose_file: './docker-compose.yml'
+#          heroku_apps: '[{"imagename":"app1","appname":"app1","apptype":"web"},{"imagename":"app2","appname":"app2","apptype":"web"},{"imagename":"app3","appname":"app2","apptype":"worker"}]' # List of Docker Image name, Heroku app and Heroku app type
